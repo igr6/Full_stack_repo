@@ -1,34 +1,87 @@
+import React from 'react'
 import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
 
-function App() {
-  const [count, setCount] = useState(0)
+const Header = (props) => {
+  // This component is used to display the header of the application
+  console.log(props)
+ return(
+ <div>
+     <h1>{props.title}</h1>
+  </div>
+ )
+}
+
+const Button = ({ handleClick, text }) => (
+  // This component is used to display a button with a click handler and text
+  <button onClick={handleClick}>
+    {text}
+  </button>
+)
+
+const StatisticLine = ({text, value}) => {
+  // This component is used to display each line of the statistics table
+
+  return (
+  <tr>
+    <td>{text}</td>
+    <td>{value}</td>
+  </tr>
+  )
+}
+
+const Statistics = ({ title, good, neutral, bad }) => {
+  // This component is used to display the statistics of the feedback
+  const all = good + neutral + bad
+
+  if (all === 0) {
+    return (
+      <>
+        <h1>{title}</h1>
+        <p>No feedback given</p>
+      </>
+    )
+  }
+
+  const statisticsData = [
+    // This array contains the data to be displayed in the statistics table
+    { text: 'good', value: good },
+    { text: 'neutral', value: neutral },
+    { text: 'bad', value: bad },
+    { text: 'all', value: all },
+    { text: 'average', value: ((good - bad) / all).toFixed(1) },
+    { text: 'positive', value: ((good / all) * 100).toFixed(1) + ' %' },
+  ]
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      <h1>{title}</h1>
+      <table>
+        <tbody>
+          {statisticsData.map(({ text, value }) => (
+            <StatisticLine key={text} text={text} value={value} />
+          ))}
+        </tbody>
+      </table>
     </>
+  )
+}
+
+const App = () => {
+  // save clicks of each botton with its own state
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+
+
+
+  return (
+    <div>
+      <Header title={'give feedback'} />
+      <Button handleClick={() => setGood(good + 1)} text='good' />
+      <Button handleClick={() => setNeutral(neutral + 1)} text='neutral' />
+      <Button handleClick={() => setBad(bad + 1)} text='bad' />
+      <Statistics title={'statistics'} allClicks={good+neutral+bad} good={good} neutral={neutral} bad={bad}/>
+    </div>
   )
 }
 
